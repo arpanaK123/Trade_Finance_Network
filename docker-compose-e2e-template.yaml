@@ -1,0 +1,153 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.bridgelabz.com:
+  peer0.importer.bridgelabz.com:
+  peer0.exporter.bridgelabz.com:
+  peer0.importerBank.bridgelabz.com:
+  peer0.custom.bridgelabz.com:
+  peer0.insurance.bridgelabz.com:
+
+
+networks:
+  tradenetwork:
+services:
+  ca0:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-importer
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.importer.bridgelabz.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.importer.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/importer.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerImporter
+    networks:
+      - tradenetwork
+
+  ca1:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-exporter
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.exporter.bridgelabz.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.exporter.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/exporter.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerExporter
+    networks:
+      - tradenetwork
+
+  ca2:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-importerBank
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.importerBank.bridgelabz.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.importerBank.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/importerBank.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerImporterBank
+    networks:
+      - tradenetwork
+
+  ca3:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-custom
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.custom.bridgelabz.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.custom.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/custom.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerCustom
+    networks:
+      - tradenetwork
+
+  ca4:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-insurance
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.insurance.bridgelabz.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "11054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.insurance.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/insurance.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerInsurance
+    networks:
+      - tradenetwork
+
+  orderer.bridgelabz.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.bridgelabz.com
+    container_name: orderer.bridgelabz.com
+    networks:
+      - tradenetwork
+
+  peer0.importer.bridgelabz.com:
+    container_name: peer0.importer.bridgelabz.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.importer.bridgelabz.com
+    networks:
+      - tradenetwork
+
+  peer0.exporter.bridgelabz.com:
+    container_name: peer0.exporter.bridgelabz.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.exporter.bridgelabz.com
+    networks:
+      - tradenetwork
+
+  peer0.importerBank.bridgelabz.com:
+    container_name: peer0.importerBank.bridgelabz.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.importerBank.bridgelabz.com
+    networks:
+      - tradenetwork
+
+  peer0.custom.bridgelabz.com:
+    container_name: peer0.custom.bridgelabz.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.custom.bridgelabz.com
+    networks:
+      - tradenetwork
+
+  peer0.insurance.bridgelabz.com:
+    container_name: peer0.insurance.bridgelabz.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.insurance.bridgelabz.com
+    networks:
+      - tradenetwork
+
+  

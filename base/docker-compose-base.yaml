@@ -1,0 +1,135 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.bridgelabz.com:
+    container_name: orderer.bridgelabz.com
+    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=false
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/bridgelabz.com/orderers/orderer.bridgelabz.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/bridgelabz.com/orderers/orderer.bridgelabz.com/tls/:/var/hyperledger/orderer/tls
+    - orderer.bridgelabz.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.importer.bridgelabz.com:
+    container_name: peer0.importer.bridgelabz.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.importer.bridgelabz.com
+      - CORE_PEER_ADDRESS=peer0.importer.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.importer.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.importer.bridgelabz.com:7051
+      - CORE_PEER_LOCALMSPID=ImporterMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/importer.bridgelabz.com/peers/peer0.importer.bridgelabz.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/importer.bridgelabz.com/peers/peer0.importer.bridgelabz.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.importer.bridgelabz.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer0.exporter.bridgelabz.com:
+    container_name: peer0.exporter.bridgelabz.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.exporter.bridgelabz.com
+      - CORE_PEER_ADDRESS=peer0.exporter.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.exporter.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.exporter.bridgelabz.com:7051
+      - CORE_PEER_LOCALMSPID=ExporterMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/exporter.bridgelabz.com/peers/peer0.exporter.bridgelabz.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/exporter.bridgelabz.com/peers/peer0.exporter.bridgelabz.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.exporter.bridgelabz.com:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer0.custom.bridgelabz.com:
+    container_name: peer0.custom.bridgelabz.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.custom.bridgelabz.com
+      - CORE_PEER_ADDRESS=peer0.custom.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.custom.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.custom.bridgelabz.com:7051
+      - CORE_PEER_LOCALMSPID=CustomMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/custom.bridgelabz.com/peers/peer0.custom.bridgelabz.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/custom.bridgelabz.com/peers/peer0.custom.bridgelabz.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.custom.bridgelabz.com:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer0.importerBank.bridgelabz.com:
+    container_name: peer0.importerBank.bridgelabz.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.importerBank.bridgelabz.com
+      - CORE_PEER_ADDRESS=peer0.importerBank.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.importerBank.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.importerBank.bridgelabz.com:7051
+      - CORE_PEER_LOCALMSPID=ImporterBankMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/importerBank.bridgelabz.com/peers/peer0.importerBank.bridgelabz.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/importerBank.bridgelabz.com/peers/peer0.importerBank.bridgelabz.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.importerBank.bridgelabz.com:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+
+  peer0.insurance.bridgelabz.com:
+    container_name: peer0.insurance.bridgelabz.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.insurance.bridgelabz.com
+      - CORE_PEER_ADDRESS=peer0.insurance.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.insurance.bridgelabz.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.insurance.bridgelabz.com:7051
+      - CORE_PEER_LOCALMSPID=InsuranceMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/insurance.bridgelabz.com/peers/peer0.insurance.bridgelabz.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/insurance.bridgelabz.com/peers/peer0.insurance.bridgelabz.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.insurance.bridgelabz.com:/var/hyperledger/production
+    ports:
+      - 11051:7051
+      - 11053:7053
+
+
