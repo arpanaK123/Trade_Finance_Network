@@ -22,9 +22,9 @@ COUNTER=1
 MAX_RETRY=5
 ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/bridgelabz.com/orderers/orderer.bridgelabz.com/msp/tlscacerts/tlsca.bridgelabz.com-cert.pem
 
-CC_SRC_PATH="github.com/chaincode/chaincode_example02/go/"
+CC_SRC_PATH="github.com/chaincode/tradefinancecc/go/"
 if [ "$LANGUAGE" = "node" ]; then
-	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/node/"
+	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/tradefinancecc/node/"
 fi
 
 echo "Channel name : "$CHANNEL_NAME
@@ -74,34 +74,40 @@ joinChannel
 ## Set the anchor peers for each org in the channel
 echo "Updating anchor peers for importer..."
 updateAnchorPeers 0 1
-echo "Updating anchor peers for org2..."
+echo "Updating anchor peers for exporter..."
 updateAnchorPeers 0 2
-echo "Updating anchor peers for org2..."
+echo "Updating anchor peers for custom..."
 updateAnchorPeers 0 3
-echo "Updating anchor peers for org2..."
+echo "Updating anchor peers for importerBank..."
 updateAnchorPeers 0 4
-echo "Updating anchor peers for org2..."
+echo "Updating anchor peers for insurance..."
 updateAnchorPeers 0 5
 
-# ## Install chaincode on peer0.org1 and peer0.org2
-# echo "Installing chaincode on peer0.org1..."
-# installChaincode 0 1
-# echo "Install chaincode on peer0.org2..."
-# installChaincode 0 2
+## Install chaincode on peer0.importer and peer0.exporter and peer0.custom and peer0.importerBank and peer0.insurance
+echo "Installing chaincode on peer0.importer..."
+installChaincode 0 1
+echo "Install chaincode on peer0.exporter..."
+installChaincode 0 2
+echo "Install chaincode on peer0.custom..."
+installChaincode 0 3
+echo "Install chaincode on peer0.importerBank..."
+installChaincode 0 4
+echo "Install chaincode on peer0.insurance..."
+installChaincode 0 5
 
-# # Instantiate chaincode on peer0.org2
-# echo "Instantiating chaincode on peer0.org2..."
-# instantiateChaincode 0 2
+# Instantiate chaincode on peer0.exporter
+echo "Instantiating chaincode on peer0.exporter..."
+instantiateChaincode 0 2
 
-# # Query chaincode on peer0.org1
-# echo "Querying chaincode on peer0.org1..."
+# # Query chaincode on peer0.importer
+# echo "Querying chaincode on peer0.importer..."
 # chaincodeQuery 0 1 100
 
-# # Invoke chaincode on peer0.org1
-# echo "Sending invoke transaction on peer0.org1..."
+# # Invoke chaincode on peer0.importer
+# echo "Sending invoke transaction on peer0.importer..."
 # chaincodeInvoke 0 1
 
-# ## Install chaincode on peer1.org2
+# ## Install chaincode on peer1.exporter
 # echo "Installing chaincode on peer1.org2..."
 # installChaincode 1 2
 
