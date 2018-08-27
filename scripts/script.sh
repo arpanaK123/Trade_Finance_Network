@@ -99,13 +99,17 @@ installChaincode 0 5
 echo "Instantiating chaincode on peer0.exporter..."
 instantiateChaincode 0 2
 
-# # Query chaincode on peer0.importer
-# echo "Querying chaincode on peer0.importer..."
-# chaincodeQuery 0 1 100
+# Query chaincode on peer0.exporter
+echo "Querying chaincode on peer0.exporter..."
+chaincodeQuery 0 2 200
 
-# # Invoke chaincode on peer0.importer
-# echo "Sending invoke transaction on peer0.importer..."
-# chaincodeInvoke 0 1
+# Invoke chaincode on peer0.importer
+echo "Sending invoke transaction on peer0.exporter..."
+chaincodeInvoke 0 2
+
+# Query chaincode on peer0.exporter
+echo "Querying chaincode on peer0.exporter..."
+chaincodeQuery 0 2 200
 
 # ## Install chaincode on peer1.exporter
 # echo "Installing chaincode on peer1.org2..."
