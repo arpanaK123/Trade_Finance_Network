@@ -466,8 +466,7 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for InsuranceMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate \
-  ./channel-artifacts/InsuranceMSPanchors.tx -channelID $CHANNEL_NAME -asOrg InsuranceMSP
+  configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/InsuranceMSPanchors.tx -channelID $CHANNEL_NAME -asOrg InsuranceMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
