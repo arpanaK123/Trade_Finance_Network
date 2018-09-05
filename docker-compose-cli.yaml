@@ -17,6 +17,22 @@ networks:
   tradenetwork:
 
 services:
+  ca0:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-importer
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.importer.bridgelabz.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f547d24a1ac42543d2dc6b5746237207f71c4b67aa8fa8b3775a15931f220803_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.importer.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/f547d24a1ac42543d2dc6b5746237207f71c4b67aa8fa8b3775a15931f220803_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/importer.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca
+    networks:
+      - tradenetwork
 
   orderer.bridgelabz.com:
     extends:
@@ -101,3 +117,4 @@ services:
       - peer0.insurance.bridgelabz.com
     networks:
       - tradenetwork
+

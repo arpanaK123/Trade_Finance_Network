@@ -30,7 +30,7 @@ services:
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.importer.bridgelabz.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/importer.bridgelabz.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerImporter
+    container_name: ca
     networks:
       - tradenetwork
 
